@@ -17,18 +17,18 @@ def read_excel(file):
     for i, row in df.iterrows():
         tarifa = row['tarifa_internet']
         velocidad = int(row['velocidad'])
-        sql = f"UPDATE dim_tarifas_internet SET velocidad = {velocidad} WHERE tarifa_internet LIKE '{tarifa}%'"
-        print(sql)
-    #     values =[]
-    #     for j in range(0,columns):
-    #         val = df.loc[i][j]
-    #         if val != val:
-    #             val = ""
-    #         values.append(val)
-    #     tpl = tuple(values)
-    #     result.append(tpl)
-    # with open("files\df.txt",'w')as file:
-    #     file.write(str(result))
+        sql = f"UPDATE dim_tarifas_internet SET velocidad = {velocidad} WHERE tarifa_internet LIKE '{tarifa}'"
+
+        try:
+            conn = connection_db_local()
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(sql)
+                    conn.commit()
+            finally:
+                conn.close()
+        except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
+            print(f"Error not connect in mysql {e}")
 
 
 url= "files\Tarifa_internet.xlsx"
